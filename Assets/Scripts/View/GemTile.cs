@@ -45,7 +45,7 @@ namespace MatchGem.View
         /// <summary>
         /// 取得一張預設的Sprite圖片(白色)
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Sprite圖片</returns>
         private Sprite GetDefaultSprite()
         {
             if (_defualtSprite == null)
