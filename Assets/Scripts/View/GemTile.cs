@@ -10,7 +10,8 @@ namespace MatchGem.View
     public class GemTile : MonoBehaviour
     {
         #region 基本參數
-        [SerializeField] private float _tileScale = 0.9f;
+        [SerializeField]
+        private float _tileScale = 0.9f;
         private SpriteRenderer _spriteRenderer;
         /// <summary>
         /// 視覺渲染的延遲讀取
@@ -26,7 +27,10 @@ namespace MatchGem.View
                 return _spriteRenderer;
             }
         }
-        private Sprite _defualtSprite;
+        /// <summary>
+        /// [static(靜態)]共用靜態(Sprite)參數 統一管理
+        /// </summary>
+        private static Sprite _defualtSprite;
         #endregion 基本參數
 
         #region 公開功能
