@@ -4,28 +4,28 @@ using UnityEngine;
 namespace MatchGem.Core
 {
     /// <summary>
-    /// [Struct]囱絃畒夹
+    /// [Struct]棋盤格的座標
     /// </summary>
     public struct CellCoord
     {
-        #region 膀セ把计
+        #region 基本參數
         /// <summary>
-        /// キ畒夹 get
+        /// 水平座標 只能get
         /// </summary>
         public int X { get; }
         /// <summary>
-        /// 畒夹 get
+        /// 垂直座標 只能get
         /// </summary>
         public int Y { get; }
-        #endregion 膀セ把计
+        #endregion 基本參數
 
-        #region 篶Α
+        #region 建構式
         public CellCoord(int x, int y)
         {
             this.X = x;
             this.Y = y;
         }
-        #endregion 篶Α
+        #endregion 建構式
     }
 
 }
