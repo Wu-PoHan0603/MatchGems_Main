@@ -1,5 +1,5 @@
 using UnityEngine;
-using MatchGem.Core;    
+using MatchGem.Core;
 
 namespace MatchGem.View
 {
