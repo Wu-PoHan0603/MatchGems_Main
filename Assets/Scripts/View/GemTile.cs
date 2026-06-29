@@ -16,6 +16,7 @@ namespace MatchGem.View
         /// <summary>
         /// 視覺渲染的延遲讀取
         /// </summary>
+        //private SpriteRenderer SpriteRenderer => _spriteRenderer == null ? _spriteRenderer = GetComponent<SpriteRenderer>() : _spriteRenderer; 三元運算子寫法 結構 (? : ;) <?一定要給條件>
         private SpriteRenderer SpriteRenderer
         {
             get
@@ -42,6 +43,7 @@ namespace MatchGem.View
         {
             SpriteRenderer.sprite = GetDefaultSprite();
             SpriteRenderer.color = GetColor(gemType);
+            transform.localScale = Vector3.one * _tileScale;
         }
         #endregion 公開功能
 
@@ -57,8 +59,8 @@ namespace MatchGem.View
                 Texture2D texture = new Texture2D(1, 1); //建立最小單位的貼圖 1*1
                 texture.SetPixel(0, 0, Color.white); //設定像素顏色
                 texture.Apply();
-
-                _defualtSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+                //用指定參數格式建立圖片(貼圖,預設矩形定位&尺寸,錨點位置正中,一單位容納像素值)
+                _defualtSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1);
             }
             return _defualtSprite;
 
@@ -84,9 +86,6 @@ namespace MatchGem.View
         }
         #endregion 私有功能
 
-        private void Start()
-        {
-            SetGem(GemType.Yellow);
-        }
+
     }
 }

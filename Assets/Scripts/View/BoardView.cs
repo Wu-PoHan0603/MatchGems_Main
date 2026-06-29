@@ -47,9 +47,10 @@ namespace MatchGem.View
                 for (int x = 0; x < board.Width; x++)
                 {
                     _tiles[x,y] = CreateTile(x,y);
+                    _tiles[x, y].SetGem(GemType.Pink);
                 }
             }
-            ClearTiles();
+
         }
         #endregion 公開方法
 
@@ -62,7 +63,7 @@ namespace MatchGem.View
         /// <returns>寶石磚</returns>
         private GemTile CreateTile(int x, int y)
         {
-            Vector3 position = new Vector3(x * CellWorldSize,y * CellWorldSize,0);  
+            Vector3 position = new Vector3(x * CellWorldSize, y * CellWorldSize, 0);  
             return Instantiate(_tilePrefab, position, Quaternion.identity, transform);
             //四元數.不翻轉 transform繼承相關腳本物件
         }
@@ -79,7 +80,7 @@ namespace MatchGem.View
             }*/
         }
         #endregion 私有方法
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        
         
     }
 
