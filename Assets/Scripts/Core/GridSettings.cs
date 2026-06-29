@@ -40,7 +40,7 @@ namespace MatchGem.Core
                 {
                     _boardModel.SetGem(x, y, (GemType)Random.Range(0,6));//可以在Random前面加上()進行想要的類別轉型
                     Debug.Log($"座標:{x},{y},顏色:{_boardModel.GetGem(x,y).Color}");
-                    Debug.Log($"{x}{y}{GemType.Pink}");
+                    //Debug.Log($"{x}{y}{GemType.Pink}");
                 }
             }
         }
