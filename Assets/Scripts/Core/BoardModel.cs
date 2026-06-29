@@ -1,3 +1,6 @@
+using System;
+using Unity.Mathematics;
+
 namespace MatchGem.Core
 {
     /// <summary>
@@ -31,8 +34,8 @@ namespace MatchGem.Core
         /// <param name="h">高</param>
         public BoardModel(int w, int h)
         {
-            Width = w;
-            Height = h;
+            Width = Math.Max(1,w); //最少為1的安全機制
+            Height = Math.Max(w,1); //最少為1的安全機制
             _gems = new GemData[Width,Height];
         }
         #endregion #建構式
@@ -64,7 +67,8 @@ namespace MatchGem.Core
         /// <returns>寶石資料</returns>
         public GemData GetGem(CellCoord coord)
         {
-            return _gems[coord.X,coord.Y];//有設定就要有拿
+            //三元運算,條件判斷(是/否)? 是(回應),否(回應)
+            return IsInside(coord) ? _gems[coord.X, coord.Y] : null;//有設定就要有拿
         }
         /// <summary>
         /// 取得指定格子的寶石
@@ -74,8 +78,23 @@ namespace MatchGem.Core
         /// <returns>寶石資料</returns>
         public GemData GetGem(int x, int y)
         {
-            return _gems[x,y];//有設定就要有拿
+            return IsInside(x,y) ? _gems[x, y] : null;//有設定就要有拿
         }
         #endregion 公開方法
+
+        #region 安全查驗功能
+        public bool IsInside(CellCoord coord)
+        {
+            return coord.X>= 0 && coord.Y>=0 && coord.X<Width && coord.Y<Height;
+        }
+        public bool IsInside(int x, int y)
+        {
+            return x>= 0 && y>=0 && x<Width && y<Height;
+        }
+        public bool HasGem(CellCoord coord)
+        {
+            return IsInside(coord) && _gems[coord.X, coord.Y] != null;
+        }
+        #endregion 安全查驗功能
     }
 }
