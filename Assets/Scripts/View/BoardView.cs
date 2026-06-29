@@ -52,6 +52,12 @@ namespace MatchGem.View
         #endregion 公開方法
 
         #region 私有方法
+        /// <summary>
+        /// 依照定位實例化寶石磚
+        /// </summary>
+        /// <param name="x">座標X</param>
+        /// <param name="y">座標Y</param>
+        /// <returns>寶石磚</returns>
         private GemTile CreateTile(int x, int y)
         {
             Vector3 position = new Vector3(x * CellWorldSize,y * CellWorldSize,0);  
