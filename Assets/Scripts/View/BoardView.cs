@@ -37,7 +37,8 @@ namespace MatchGem.View
         /// <param name="board">棋盤資料</param>
         public void Build(BoardModel board)
         {
-            //清理舊資料
+            //清理舊的視覺資料
+            //ClearTiles();
             //產生與資料相同的視覺
             _tiles = new GemTile[board.Width, board.Height];
 
@@ -48,6 +49,7 @@ namespace MatchGem.View
                     _tiles[x,y] = CreateTile(x,y);
                 }
             }
+            ClearTiles();
         }
         #endregion 公開方法
 
@@ -64,12 +66,21 @@ namespace MatchGem.View
             return Instantiate(_tilePrefab, position, Quaternion.identity, transform);
             //四元數.不翻轉 transform繼承相關腳本物件
         }
+
+        public void ClearTiles()
+        {
+            //Destroy(transform.GetChild(0).gameObject);
+            Debug.Log(transform.childCount);
+            //一種連發的 if
+            /*while (transform.childCount > 0)
+            {
+                //不斷刪除子物件,直到歸0為止
+                Destroy(transform.GetChild(0).gameObject);
+            }*/
+        }
         #endregion 私有方法
         // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
-        {
         
-        }
     }
 
 }
