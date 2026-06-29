@@ -5,8 +5,11 @@ namespace MatchGem.Core
     /// </summary>
     public class BoardModel
     {
+        /// <summary>
+        /// 寶石陣(二維)
+        /// </summary>
         #region #基本參數
-        private GemData[,] _gems; // [,]二維陣列
+        private GemData[,] _gems;
         #endregion #基本參數
 
         #region #公開參數接口
@@ -45,6 +48,16 @@ namespace MatchGem.Core
             _gems[coord.X,coord.Y] = new GemData(gemType);
         }
         /// <summary>
+        /// 設定指定格子的寶石
+        /// </summary>
+        /// <param name="x">X座標</param>
+        /// <param name="y">Y座標</param>
+        /// <param name="gemType">寶石類型</param>
+        public void SetGem(int x, int y, GemType gemType)
+        {
+            _gems[x,y] = new GemData(gemType);
+        }
+        /// <summary>
         /// 取得指定格子的寶石
         /// </summary>
         /// <param name="coord">定位資料</param>
@@ -52,6 +65,16 @@ namespace MatchGem.Core
         public GemData GetGem(CellCoord coord)
         {
             return _gems[coord.X,coord.Y];//有設定就要有拿
+        }
+        /// <summary>
+        /// 取得指定格子的寶石
+        /// </summary>
+        /// <param name="x">X座標</param>
+        /// <param name="y">Y座標</param>
+        /// <returns>寶石資料</returns>
+        public GemData GetGem(int x, int y)
+        {
+            return _gems[x,y];//有設定就要有拿
         }
         #endregion 公開方法
     }
