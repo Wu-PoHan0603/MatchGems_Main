@@ -69,7 +69,7 @@ namespace MatchGem.Inputs
         {
             _isDragging = true;
             _dragStarPos = downPos;
-            _dragStarCoord = _gridMapper.ToCell(ScreenToWorldPos(_dragStarPos));
+            _dragStarCoord = ScreenToCell(_dragStarPos);
             Debug.Log(_dragStarCoord.pos);
         }
 
@@ -79,8 +79,17 @@ namespace MatchGem.Inputs
         /// <param name="screenPos">螢幕座標</param>
         /// <returns>對應世界座標</returns>
         private Vector3 ScreenToWorldPos(Vector2 screenPos)
-        {
+        {//從攝影機發射射線到世界(三維世界)得到座標轉換
             return _camera.ScreenToWorldPoint(screenPos);
+        }
+        /// <summary>
+        /// 螢幕直轉至棋盤格
+        /// </summary>
+        /// <param name="screenPos">螢幕座標</param>
+        /// <returns>棋盤座標</returns>
+        private CellCoord ScreenToCell(Vector2 screenPos)
+        {
+            return _gridMapper.ToCell(ScreenToWorldPos(_dragStarPos));
         }
         /// <summary>
         /// 鬆開的結束邏輯

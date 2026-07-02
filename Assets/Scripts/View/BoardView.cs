@@ -40,7 +40,7 @@ namespace MatchGem.View
         {
             _gridMapper = gridMapper;
             //清理舊的視覺資料
-            //ClearTiles();
+            ClearTiles();
             //產生與資料相同的視覺
             _tiles = new GemTile[board.Width, board.Height];
 
@@ -76,15 +76,19 @@ namespace MatchGem.View
             //一種連發的 if
             /*while (transform.childCount > 0)
             {
-                //不斷刪除子物件,直到歸0為止
-                Destroy(transform.GetChild(0).gameObject);
+               Transform child = transform.GetChild(0);
+                
+                // 關鍵：立刻解除父子關係，讓它不要擋在 BoardView 底下影響新生成的寶石
+                child.SetParent(null); 
+                
+                // 或者立刻隱藏它
+                child.gameObject.SetActive(false);
+                
+                // 安排銷毀
+                Destroy(child.gameObject);
             }*/
         }
         #endregion 私有方法
-
-        #region 私有方法
-        # endregion 私有方法
-
     }
 
 }

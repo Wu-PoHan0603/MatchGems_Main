@@ -48,7 +48,6 @@ namespace MatchGems.Game
             }
 
         }
-
         /// <summary>
         /// 建立轉換器
         /// </summary>
@@ -58,6 +57,13 @@ namespace MatchGems.Game
                 (_boardView.transform.position, _boardView.CellWorldSize);
         }
 
+        /// <summary>
+        /// 以資料驅動視覺
+        /// </summary>
+        public void BuildView()
+        {
+            _boardView.Build(_boardModel, _gridMapper);
+        }
         public void ConfigureInput()
         {
             
@@ -75,6 +81,7 @@ namespace MatchGems.Game
             if (!_boardModel.IsInside(to)) return;
             if (!_boardModel.IsAdjacent(from, to)) return;
             _boardModel.SwapGems(from, to);
+            BuildView();
         }
         # endregion 私有方法
     }
