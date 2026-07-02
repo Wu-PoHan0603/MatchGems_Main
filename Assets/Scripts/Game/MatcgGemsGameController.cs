@@ -60,6 +60,7 @@ namespace MatchGems.Game
 
         public void ConfigureInput()
         {
+            
             _boardInput.Configure(_gridMapper);//CellSize先走預設
             _boardInput.SwapAction = TrySwap;
         }

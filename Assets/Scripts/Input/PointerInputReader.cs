@@ -3,7 +3,7 @@ using UnityEngine;
 namespace MatchGem.Inputs
 {
     /// <summary>
-    /// 指標輸入讀取器
+    /// 指標輸入(螢幕座標)讀取器
     /// </summary>
     public class PointerInputReader
     {
@@ -41,7 +41,7 @@ namespace MatchGem.Inputs
         /// </summary>
         /// <param name="screenPos">out點擊滑鼠左鍵當下的位置</param>
         /// <returns>是否放開左鍵</returns>
-        public bool TryGetPointerup(out Vector2 screenPos)
+        public bool TryGetPointerUp(out Vector2 screenPos)
         {
             if (Input.touchCount > 0)
             {//觸控點大於1時

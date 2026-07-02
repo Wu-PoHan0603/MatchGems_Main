@@ -17,6 +17,8 @@ namespace MatchGem.Core
         /// 垂直座標 只能get
         /// </summary>
         public int Y { get; }
+
+        public string pos => $"座標:[{X},{Y}]";
         #endregion 基本參數
 
         #region 建構式

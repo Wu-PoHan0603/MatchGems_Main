@@ -1,6 +1,5 @@
 using MatchGem.Core;
 using System;
-using System.Net;
 using UnityEngine;
 
 namespace MatchGem.Inputs
@@ -57,7 +56,7 @@ namespace MatchGem.Inputs
             if(!IsReady) return;
             //準備完成:隨時監看輸入操作
             if(_PIR.TryGetPointerDown(out Vector2 downPos)) BeginPointer(downPos);
-            if (_PIR.TryGetPointerDown(out Vector2 upPos)) EndPointer(upPos);
+            if (_PIR.TryGetPointerUp(out Vector2 upPos)) EndPointer(upPos);
         }
         #endregion UNITY生命週期
 
@@ -68,10 +67,20 @@ namespace MatchGem.Inputs
         /// <param name="downPos">按下的位置</param>
         private void BeginPointer(Vector2 downPos)
         {
-            Debug.Log("點擊~");
             _isDragging = true;
             _dragStarPos = downPos;
-            _dragStarCoord = _gridMapper.ToCell(_dragStarPos);
+            _dragStarCoord = _gridMapper.ToCell(ScreenToWorldPos(_dragStarPos));
+            Debug.Log(_dragStarCoord.pos);
+        }
+
+        /// <summary>
+        /// 螢幕座標位置轉世界座標
+        /// </summary>
+        /// <param name="screenPos">螢幕座標</param>
+        /// <returns>對應世界座標</returns>
+        private Vector3 ScreenToWorldPos(Vector2 screenPos)
+        {
+            return _camera.ScreenToWorldPoint(screenPos);
         }
         /// <summary>
         /// 鬆開的結束邏輯

@@ -7,7 +7,7 @@ namespace MatchGem.Core
     /// <summary>
     /// 棋盤與世界座標的轉換器
     /// </summary>
-    public class GridMapper : MonoBehaviour
+    public class GridMapper
     {
         #region 基本參數
         /// <summary>
@@ -45,14 +45,15 @@ namespace MatchGem.Core
         }
 
         /// <summary>
-        /// 世界座標轉格子
+        /// 世界(螢幕點擊位置)座標轉格子
         /// </summary>
-        /// <param name="worldPos">世界座標</param>
-        /// <returns></returns>
+        /// <param name="worldPos">螢幕點擊座標</param>
+        /// <returns>格子座標</returns>
         public CellCoord ToCell(Vector3 worldPos)
         {
-            int x = (int)((worldPos - _origin).x / _cellWorldSize);
-            int y = (int)((worldPos - _origin).y / _cellWorldSize);
+            Vector3 local = worldPos - _origin;
+            int x = (int)(local.x + _cellWorldSize * 0.5f / _cellWorldSize);
+            int y = (int)(local.y + _cellWorldSize * 0.5f / _cellWorldSize);
             return new CellCoord(x, y);
         }
         #endregion 公開方式

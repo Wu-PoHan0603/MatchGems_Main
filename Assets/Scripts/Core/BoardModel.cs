@@ -89,19 +89,21 @@ namespace MatchGem.Core
         /// <param name="to">目標</param>
         public void SwapGems(CellCoord from, CellCoord to)
         {
-            Debug.Log($"{_gems[from.X, from.Y].Color > _gems[to.X, to.Y].Color}");
+            Debug.Log($"{_gems[from.X, from.Y].Color} → {_gems[to.X, to.Y].Color}");
             GemData tmp = _gems[from.X,from.Y];
             _gems[to.X, to.Y] = _gems[from.X, from.Y];
             _gems[from.X, from.Y] = tmp;
+
+            Debug.Log($"{_gems[from.X, from.Y].Color} | {_gems[to.X, to.Y].Color}");
         }
         #endregion 公開方法
 
-            #region 安全查驗功能
-            /// <summary>
-            /// 範圍檢查
-            /// </summary>
-            /// <param name="coord"></param>
-            /// <returns></returns>
+        #region 安全查驗功能
+        /// <summary>
+        /// 範圍檢查
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <returns></returns>
         public bool IsInside(CellCoord coord)
         {
             return coord.X>= 0 && coord.Y>=0 && coord.X<Width && coord.Y<Height;
