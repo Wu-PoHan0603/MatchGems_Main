@@ -64,6 +64,9 @@ namespace MatchGems.Game
         {
             _boardView.Build(_boardModel, _gridMapper);
         }
+        /// <summary>
+        /// 設置輸入操作
+        /// </summary>
         public void ConfigureInput()
         {
             
@@ -82,7 +85,37 @@ namespace MatchGems.Game
             if (!_boardModel.IsAdjacent(from, to)) return;
             _boardModel.SwapGems(from, to);
             BuildView();
+            //執行配對的演算邏輯
+            MatchLog();
         }
-        # endregion 私有方法
+
+        private void MatchLog()
+        {
+            // 💡 1. 您必須在這裡 new 出剛剛修好的 Finder 物件
+            MatchFinder finder = new MatchFinder();
+
+            // 💡 2. 將現有的 _boardModel 丟進去進行全盤掃描
+            MatchResult result = finder.FindMatches(_boardModel);
+
+            // 💡 3. 如果沒有連線，程式會在這裡直接被攔截 return
+            if (!result.HasMatch)
+            {
+                // 您也可以在這裡加一行測試，看有沒有成功走到這：
+                // Debug.Log("【測試】掃描完畢，但盤面上目前沒有任何連線。");
+                return;
+            }
+
+            // 💡 4. 只有當 Finder 真的在 _boardModel 裡抓到連線，這行才會印出來！
+            Debug.Log($"配到{result.LineCount}條");
+        }
+        /*{
+            //掃描結果
+            MatchResult result = new MatchResult();
+
+            if (!result.HasMatch) return;
+
+            Debug.Log($"配到{result.LineCount}條");
+        }*/
+        #endregion 私有方法
     }
 }

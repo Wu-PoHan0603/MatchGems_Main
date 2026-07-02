@@ -18,7 +18,7 @@ namespace MatchGem.Core
         Vertical
     }
     /// <summary>
-    /// 連線的寶石配對
+    /// 連線的寶石配對資料(單線)
     /// </summary>
     public class MatchLine
     {
@@ -41,7 +41,7 @@ namespace MatchGem.Core
         /// <summary>
         /// 連線長度(資料記錄數量)
         /// </summary>
-        public int Length => _coord.Count;
+        public int Length => _coords.Count;
         #endregion 公開資訊
 
         #region 建構式

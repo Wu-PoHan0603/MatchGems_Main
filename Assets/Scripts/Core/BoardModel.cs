@@ -36,7 +36,7 @@ namespace MatchGem.Core
         public BoardModel(int w, int h)
         {
             Width = Math.Max(1,w); //最少為1的安全機制
-            Height = Math.Max(w,1); //最少為1的安全機制
+            Height = Math.Max(h,1); //最少為1的安全機制
             _gems = new GemData[Width,Height];
         }
         #endregion #建構式
@@ -80,6 +80,11 @@ namespace MatchGem.Core
         public GemData GetGem(int x, int y)
         {
             return IsInside(x,y) ? _gems[x, y] : null;//有設定就要有拿
+        }
+
+        public GemType GetGemColor(CellCoord coord)
+        {
+            return GetGem(coord).Color;
         }
 
         /// <summary>

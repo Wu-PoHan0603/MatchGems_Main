@@ -72,7 +72,7 @@ namespace MatchGem.View
         public void ClearTiles()
         {
             //Destroy(transform.GetChild(0).gameObject);
-            Debug.Log(transform.childCount);
+            //Debug.Log(transform.childCount);
             //一種連發的 if
             /*while (transform.childCount > 0)
             {
