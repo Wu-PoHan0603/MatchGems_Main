@@ -133,6 +133,7 @@ namespace MatchGem.Core
         {
             return IsInside(coord) && _gems[coord.X, coord.Y] != null;
         }
+<<<<<<< Updated upstream
         /// <summary>
         /// 座標位置是否存在寶石
         /// </summary>
@@ -152,6 +153,11 @@ namespace MatchGem.Core
         public bool IsAdjacent(CellCoord a, CellCoord b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) ==  1;
+=======
+        public bool HasGem(int x, int y)
+        {
+            return IsInside(x,y) && _gems[x,y] != null;
+>>>>>>> Stashed changes
         }
         #endregion 安全查驗功能
     }
