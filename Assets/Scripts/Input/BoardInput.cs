@@ -1,8 +1,8 @@
-using MatchGem.Core;
+using MatchGems.Core;
 using System;
 using UnityEngine;
 
-namespace MatchGem.Inputs
+namespace MatchGems.Inputs
 {
     /// <summary>
     /// 棋盤輸入操作偵測
@@ -27,12 +27,12 @@ namespace MatchGem.Inputs
         private bool _hasSelected;
         private float _dragThreshold;
         /// <summary>
-        /// 開始拖曳的位置(螢幕上)
+        /// 開始拖曳的位置(螢幕上的座標)
         /// </summary>
-        private Vector2 _dragStarPos;
+        private Vector2 _dragStartPos;
         private Vector2 _dragDelta;
         private CellCoord _selectedCoord;
-        private CellCoord _dragStarCoord;
+        private CellCoord _dragStartCoord;
         private CellCoord _targetCoord;
         #endregion 基本參數
 
@@ -46,68 +46,67 @@ namespace MatchGem.Inputs
             _gridMapper = gridMapper;
             _dragThreshold = cellSize * 0.6f;
             //以防萬一攝影機忘記設定
-            if(_camera == null) _camera = Camera.main;
+            if (_camera == null) _camera = Camera.main;
         }
         #endregion 公開方法
 
         #region UNITY生命週期
         void Update()
         {
-            if(!IsReady) return;
-            //準備完成:隨時監看輸入操作
-            if(_PIR.TryGetPointerDown(out Vector2 downPos)) BeginPointer(downPos);
+            if (!IsReady) return;
+            //準備完成：隨時監看輸入操作
+            if (_PIR.TryGetPointerDown(out Vector2 downPos)) BeginPointer(downPos);
             if (_PIR.TryGetPointerUp(out Vector2 upPos)) EndPointer(upPos);
         }
         #endregion UNITY生命週期
 
         #region 私有方法
         /// <summary>
-        /// 按下的起始邏輯
+        /// 按下起始邏輯
         /// </summary>
         /// <param name="downPos">按下的位置</param>
         private void BeginPointer(Vector2 downPos)
         {
             _isDragging = true;
-            _dragStarPos = downPos;
-            _dragStarCoord = ScreenToCell(_dragStarPos);
-            Debug.Log(_dragStarCoord.pos);
+            _dragStartPos = downPos;
+            _dragStartCoord = ScreenToCell(_dragStartPos);
+            Debug.Log(_dragStartCoord.pos);
         }
-
         /// <summary>
         /// 螢幕座標位置轉世界座標
         /// </summary>
         /// <param name="screenPos">螢幕座標</param>
         /// <returns>對應世界座標</returns>
         private Vector3 ScreenToWorldPos(Vector2 screenPos)
-        {//從攝影機發射射線到世界(三維世界)得到座標轉換
+        {//從攝影機發射射線到世界(三維空間)得到座標轉換
             return _camera.ScreenToWorldPoint(screenPos);
         }
         /// <summary>
-        /// 螢幕直轉至棋盤格
+        /// 螢幕直轉棋盤格
         /// </summary>
         /// <param name="screenPos">螢幕座標</param>
         /// <returns>棋盤座標</returns>
         private CellCoord ScreenToCell(Vector2 screenPos)
         {
-            return _gridMapper.ToCell(ScreenToWorldPos(_dragStarPos));
+            return _gridMapper.ToCell(ScreenToWorldPos(screenPos));
         }
         /// <summary>
-        /// 鬆開的結束邏輯
+        /// 鬆開結束邏輯
         /// </summary>
-        /// <param name="downPos">鬆開的位置</param>
+        /// <param name="upPos">鬆開的位置</param>
         private void EndPointer(Vector2 upPos)
         {
             Debug.Log("鬆開~");
             _isDragging = false;
-            _dragDelta = upPos - _dragStarPos;
-            if(_dragDelta.magnitude >= _dragThreshold)
+            _dragDelta = upPos - _dragStartPos;
+            if (_dragDelta.magnitude >= _dragThreshold)
             {//拖曳交換
                 _targetCoord = GetTargetCoord();
-                //if (SwapAction != null) SwapAction();
-                SwapAction?.Invoke(_dragStarCoord,  _targetCoord);//執行被委託的功能
+                //if (SwapAction != null) SwapAction(,);
+                SwapAction?.Invoke(_dragStartCoord, _targetCoord);//呼叫(執行)被委託的功能
             }
             else
-            {//點擊:選取 or 交換
+            {//點擊：選取 or 交換
                 SelectOrSwap();
             }
         }
@@ -119,14 +118,13 @@ namespace MatchGem.Inputs
         private CellCoord GetTargetCoord()
         {
             if (Math.Abs(_dragDelta.x) > Math.Abs(_dragDelta.y))
-            {//橫移:絕對值計算比較 X 是否大於 Y
-                return new CellCoord(_dragStarCoord.X + (_dragDelta.x > 0 ? 1 : -1), _dragStarCoord.Y);
+            {//橫移：絕對值計算比較 X 是否大於 Y 
+                return new CellCoord(_dragStartCoord.X + (_dragDelta.x > 0 ? 1 : -1), _dragStartCoord.Y);
             }
             else
-            {//直移:絕對值計算比較 Y 是否大於 X
-                return new CellCoord(_dragStarCoord.X, _dragStarCoord.Y + (_dragDelta.y > 0 ? 1 : -1));
+            {//直移：絕對值計算比較 Y 是否大於 X 
+                return new CellCoord(_dragStartCoord.X, _dragStartCoord.Y + (_dragDelta.y > 0 ? 1 : -1));
             }
-
         }
         /// <summary>
         /// 選取或交換
@@ -136,7 +134,7 @@ namespace MatchGem.Inputs
             if (!_hasSelected)
             {//進入選取狀態
                 _hasSelected = true;
-                _selectedCoord = _dragStarCoord;
+                _selectedCoord = _dragStartCoord;
             }
             else
             {//選取交換
@@ -146,5 +144,4 @@ namespace MatchGem.Inputs
         }
         #endregion 私有方法
     }
-
 }

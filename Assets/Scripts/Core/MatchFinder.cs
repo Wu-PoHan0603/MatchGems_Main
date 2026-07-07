@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MatchGem.Core
+namespace MatchGems.Core
 {
     /// <summary>
     /// 配對掃描(演算)
@@ -23,60 +23,58 @@ namespace MatchGem.Core
             FindVertical(board, result);
             return result;
         }
-
         #endregion 公開方法
 
         #region 私有方法
         /// <summary>
-        /// 直線瞄準
+        /// 直線掃描
         /// </summary>
         /// <param name="board">棋盤資料</param>
         /// <param name="result">結果容器</param>
-        private void FindHorizontal(BoardModel board, MatchResult result)
+        private void FindVertical(BoardModel board, MatchResult result)
         {
-            for(int x = 0; x < board.Width; x++)
+            for (int x = 0; x < board.Width; x++)
             {
                 int y = 0;
-                while(y < board.Height)
+                while (y < board.Height)
                 {//沒有連3以上後的Y是多少
                     y = ScanLine(board, result, new CellCoord(x, y), MatchDirection.Vertical);
                 }
             }
         }
         /// <summary>
-        /// 橫線瞄準
+        /// 橫線掃描
         /// </summary>
         /// <param name="board">棋盤資料</param>
         /// <param name="result">結果容器</param>
-        private void FindVertical(BoardModel board, MatchResult result)
+        private void FindHorizontal(BoardModel board, MatchResult result)
         {
-            for (int y = 0; y < board.Width; y++)
-            {//沒有連3以上後的X是多少
+            for (int y = 0; y < board.Height; y++)
+            {
                 int x = 0;
-                while (x < board.Height)
-                {
+                while (x < board.Width)
+                {//沒有連3以上後的X是多少
                     x = ScanLine(board, result, new CellCoord(x, y), MatchDirection.Horizontal);
                 }
             }
         }
 
         /// <summary>
-        /// 掃描線(湊三以上成組紀錄),回報下個起始位置
+        /// 掃描線(湊三以上成組紀錄)，回報下個起始位置
         /// </summary>
         /// <param name="board">資料</param>
         /// <param name="result">結果</param>
-        /// <param name="start">掃描位置</param>
+        /// <param name="start">掃描起點</param>
         /// <param name="direction">方向</param>
         /// <returns>跳過後的位置</returns>
         private int ScanLine(BoardModel board, MatchResult result, CellCoord start, MatchDirection direction)
         {
             //先記錄起始顏色
             GemType color = board.GetGemColor(start);
-            //下一顆的座標位置
-            //CellCoord target = GetNextCoord(start, direction);
-            //預紀錄清單
-            List<CellCoord> list = new List<CellCoord> { start};
+            //下一顆的座標資料
             CellCoord target = GetNextCoord(start, direction);
+            //預記綠清單
+            List<CellCoord> list = new List<CellCoord> { start };
             //檢查循環
             while (board.HasGem(target) && board.GetGemColor(target) == color)
             {//加進清單
@@ -89,25 +87,22 @@ namespace MatchGem.Core
             {
                 result.AddLine(new MatchLine(color, direction, list));
             }
-            int nextIndex = GetNextIndex(target, direction);
-            int startIndex = GetNextIndex(start, direction);
-            return nextIndex > startIndex ? nextIndex : startIndex + 1;
-            //return GetNextIndex(target, direction);
 
+            return GetNextIndex(target, direction);
         }
 
         private CellCoord GetNextCoord(CellCoord start, MatchDirection direction)
         {
             return direction == MatchDirection.Horizontal
-                ? new CellCoord(start.X + 1, start.Y) 
+                ? new CellCoord(start.X + 1, start.Y)
                 : new CellCoord(start.X, start.Y + 1);
         }
 
         private int GetNextIndex(CellCoord start, MatchDirection direction)
         {
-            return direction == MatchDirection.Horizontal? start.X : start.Y;
+            return direction == MatchDirection.Horizontal
+                ? start.X : start.Y;
         }
         #endregion 私有方法
     }
-
 }

@@ -1,15 +1,15 @@
 using UnityEngine;
-using MatchGem.Core;
+using MatchGems.Core;
 
-namespace MatchGem.View
+namespace MatchGems.View
 {
     /// <summary>
-    /// 棋盤和寶石的視覺整體
+    /// 棋盤和寶石視覺整體
     /// </summary>
     public class BoardView : MonoBehaviour
     {
         #region 基本參數
-        [SerializeField] private int _cellSize = 64; //底線 私變數
+        [SerializeField] private int _cellSize = 64;
         [SerializeField] private float _pixelPerUnit = 64f;
         [SerializeField] private GemTile _tilePrefab;
         private GemTile[,] _tiles;
@@ -18,15 +18,15 @@ namespace MatchGem.View
 
         #region 公開屬性
         /// <summary>
-        /// 單一格像素尺寸
+        /// 單一格的像素尺寸
         /// </summary>
-        public int CellSize => _cellSize; //唯讀 讀的到改不到
+        public int CellSize => _cellSize;
         /// <summary>
-        /// 一個Unit單位的對應像素值
+        /// 一個Unity單位對應的像素值
         /// </summary>
-        public float PixePerUnit => _pixelPerUnit;
+        public float PixelPerUnit => _pixelPerUnit;
         /// <summary>
-        /// 單一格在世界座標的比例
+        /// 單一格在世界座標的單位比例
         /// </summary>
         public float CellWorldSize => _cellSize / _pixelPerUnit;
         #endregion 公開屬性
@@ -39,16 +39,16 @@ namespace MatchGem.View
         public void Build(BoardModel board, GridMapper gridMapper)
         {
             _gridMapper = gridMapper;
-            //清理舊的視覺資料
-            ClearTiles();
-            //產生與資料相同的視覺
+            //清理舊視覺資料
+            //ClearTiles();
+            //產生與資料相同的視覺尺寸
             _tiles = new GemTile[board.Width, board.Height];
 
             for (int y = 0; y < board.Height; y++)
             {
                 for (int x = 0; x < board.Width; x++)
                 {
-                    _tiles[x,y] = CreateTile(x, y);
+                    _tiles[x, y] = CreateTile(x, y);
                     _tiles[x, y].SetGem(board.GetGem(x, y));
                 }
             }
@@ -64,31 +64,22 @@ namespace MatchGem.View
         /// <returns>寶石磚</returns>
         private GemTile CreateTile(int x, int y)
         {
-            Vector3 position = new Vector3(x * CellWorldSize, y * CellWorldSize, 0);  
+            Vector3 position = new Vector3(x * CellWorldSize, y * CellWorldSize, 0);
             return Instantiate(_tilePrefab, position, Quaternion.identity, transform);
-            //四元數.不翻轉 transform繼承相關腳本物件
         }
-
-        public void ClearTiles()
+        /// <summary>
+        /// 清除所有寶石磚
+        /// </summary>
+        private void ClearTiles()
         {
             //Destroy(transform.GetChild(0).gameObject);
-            //Debug.Log(transform.childCount);
+            Debug.Log(transform.childCount);
             //一種連發的 if
             /*while (transform.childCount > 0)
-            {
-               Transform child = transform.GetChild(0);
-                
-                // 關鍵：立刻解除父子關係，讓它不要擋在 BoardView 底下影響新生成的寶石
-                child.SetParent(null); 
-                
-                // 或者立刻隱藏它
-                child.gameObject.SetActive(false);
-                
-                // 安排銷毀
-                Destroy(child.gameObject);
+            {//不斷刪除第一個子物件，直到歸0為止
+                Destroy(transform.GetChild(0).gameObject);
             }*/
         }
         #endregion 私有方法
     }
-
 }

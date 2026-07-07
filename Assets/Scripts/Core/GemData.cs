@@ -1,7 +1,7 @@
-namespace MatchGem.Core
+namespace MatchGems.Core
 {
     /// <summary>
-    /// 寶石單體型態
+    /// 寶石單體資料
     /// </summary>
     public class GemData
     {
@@ -18,9 +18,5 @@ namespace MatchGem.Core
             Color = color;
         }
         #endregion 建構式
-
-        #region 公開屬性
-        #endregion 公開屬性
     }
-
 }

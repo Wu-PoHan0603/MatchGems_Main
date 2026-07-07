@@ -1,10 +1,10 @@
 using UnityEngine;
-using MatchGem.Core;
+using MatchGems.Core;//導入核心資料
 
-namespace MatchGem.View
+namespace MatchGems.View
 {
     /// <summary>
-    /// [MonoBehaviour]單顆寶石的畫面元件(強制綁定SpriteRenderer)
+    /// 單顆寶石的畫面元件(強制綁定SpriteRenderer)
     /// </summary>
     [RequireComponent(typeof(SpriteRenderer))]
     public class GemTile : MonoBehaviour
@@ -14,24 +14,23 @@ namespace MatchGem.View
         private float _tileScale = 0.9f;
         private SpriteRenderer _spriteRenderer;
         /// <summary>
-        /// 視覺渲染的延遲讀取
+        /// 視覺渲染延遲讀取
         /// </summary>
-        //private SpriteRenderer SpriteRenderer => _spriteRenderer == null ? _spriteRenderer = GetComponent<SpriteRenderer>() : _spriteRenderer; 三元運算子寫法 結構 (? : ;) <?一定要給條件>
-        private SpriteRenderer SpriteRenderer
-        {
+        private SpriteRenderer SpriteRenderer => _spriteRenderer == null ? _spriteRenderer = GetComponent<SpriteRenderer>() : _spriteRenderer;
+        /*{
             get
             {
                 if (_spriteRenderer == null)
                 {
                     _spriteRenderer = GetComponent<SpriteRenderer>();
                 }
-                return _spriteRenderer;
+                return _spriteRenderer; 
             }
-        }
+        }*/
         /// <summary>
-        /// [static(靜態)]共用靜態(Sprite)參數 統一管理
+        /// [靜態]共用Sprite變數
         /// </summary>
-        private static Sprite _defualtSprite;
+        private static Sprite _defaultSprite;
         #endregion 基本參數
 
         #region 公開功能
@@ -59,21 +58,20 @@ namespace MatchGem.View
 
         #region 私有功能
         /// <summary>
-        /// 取得一張預設的Sprite圖片(白色)
+        /// 取得預設Sprite圖片(白色)
         /// </summary>
         /// <returns>Sprite圖片</returns>
         private Sprite GetDefaultSprite()
         {
-            if (_defualtSprite == null)
+            if (_defaultSprite == null)
             {
-                Texture2D texture = new Texture2D(1, 1); //建立最小單位的貼圖 1*1
-                texture.SetPixel(0, 0, Color.white); //設定像素顏色
+                Texture2D texture = new Texture2D(1, 1);//建立最小單位的貼圖
+                texture.SetPixel(0, 0, Color.white);
                 texture.Apply();
-                //用指定參數格式建立圖片(貼圖,預設矩形定位&尺寸,錨點位置正中,一單位容納像素值)
-                _defualtSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1);
+                //用指定參數格式建立圖片(貼圖, 預設矩形定位&尺寸, 錨點位置正中, 一單位容納像素值)
+                _defaultSprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1);
             }
-            return _defualtSprite;
-
+            return _defaultSprite;
         }
 
         /// <summary>
@@ -89,13 +87,11 @@ namespace MatchGem.View
                 case GemType.Blue: return Color.blue;
                 case GemType.Green: return Color.green;
                 case GemType.Yellow: return Color.yellow;
-                case GemType.Purple: return new Color(0.5f, 0f, 0.5f);
-                case GemType.Pink: return new Color(1f, 0.75f, 0.8f);
+                case GemType.Purple: return Color.purple;
+                case GemType.Pink: return Color.pink;
             }
             return Color.white;
         }
         #endregion 私有功能
-
-
     }
 }

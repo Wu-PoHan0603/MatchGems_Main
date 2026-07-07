@@ -1,11 +1,10 @@
-using Unity.Mathematics;
-using Unity.Mathematics.Geometry;
+using System;
 using UnityEngine;
 
-namespace MatchGem.Core
+namespace MatchGems.Core
 {
     /// <summary>
-    /// 棋盤與世界座標的轉換器
+    /// 棋盤格與世界座標的轉換器
     /// </summary>
     public class GridMapper
     {
@@ -15,7 +14,7 @@ namespace MatchGem.Core
         /// </summary>
         private readonly Vector3 _origin;
         /// <summary>
-        /// 世界單位尺吋
+        /// 世界單位尺寸
         /// </summary>
         private readonly float _cellWorldSize;
         #endregion 基本參數
@@ -29,25 +28,25 @@ namespace MatchGem.Core
         public GridMapper(Vector3 origin, float cellWorldSize)
         {
             _origin = origin;
-            _cellWorldSize = Mathf.Max(0.1f, cellWorldSize);
+            _cellWorldSize = Math.Max(0.1f, cellWorldSize);
         }
         #endregion 建構式
 
-        #region 公開方式
+        #region 公開方法
         /// <summary>
         /// 格子轉世界座標
         /// </summary>
         /// <param name="coord">格子座標</param>
-        /// <returns></returns>
+        /// <returns>世界座標</returns>
         public Vector3 ToWorld(CellCoord coord)
         {
             return _origin + new Vector3(coord.X * _cellWorldSize, coord.Y * _cellWorldSize, 0);
         }
 
         /// <summary>
-        /// 世界(螢幕點擊位置)座標轉格子
+        /// 世界座標轉格子
         /// </summary>
-        /// <param name="worldPos">螢幕點擊座標</param>
+        /// <param name="worldPos">世界座標</param>
         /// <returns>格子座標</returns>
         public CellCoord ToCell(Vector3 worldPos)
         {
@@ -56,7 +55,6 @@ namespace MatchGem.Core
             int y = (int)(local.y + _cellWorldSize * 0.5f / _cellWorldSize);
             return new CellCoord(x, y);
         }
-        #endregion 公開方式
+        #endregion 公開方法
     }
-
 }

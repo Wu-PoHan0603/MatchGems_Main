@@ -1,33 +1,31 @@
+using MatchGems.View;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace MatchGem.Core
+namespace MatchGems.Core
 {
-    /// <summary>
-    /// [class]棋盤模型
-    /// </summary>
     public class BoardModel
     {
+        #region 基本參數
         /// <summary>
-        /// 寶石陣(二維)
+        /// 寶石陣 (二維)
         /// </summary>
-        #region #基本參數
         private GemData[,] _gems;
-        #endregion #基本參數
+        #endregion 基本參數
 
-        #region #公開參數接口
+        #region 公開參數接口
         /// <summary>
-        /// 棋盤的寬度
+        /// 棋盤寬度
         /// </summary>
         public int Width { get; }
         /// <summary>
-        /// 棋盤的高度
+        /// 棋盤高度
         /// </summary>
         public int Height { get; }
-        #endregion #公開參數接口
+        #endregion 公開參數接口
 
-        #region #建構式
+        #region 建構式
         /// <summary>
         /// 建立指定尺寸的棋盤
         /// </summary>
@@ -35,11 +33,11 @@ namespace MatchGem.Core
         /// <param name="h">高</param>
         public BoardModel(int w, int h)
         {
-            Width = Math.Max(1,w); //最少為1的安全機制
-            Height = Math.Max(h,1); //最少為1的安全機制
-            _gems = new GemData[Width,Height];
+            Width = Math.Max(1, w);//至少為1的安全機制
+            Height = Math.Max(1, h);//至少為1的安全機制
+            _gems = new GemData[Width, Height];
         }
-        #endregion #建構式
+        #endregion 建構式
 
         #region 公開方法
         /// <summary>
@@ -49,7 +47,7 @@ namespace MatchGem.Core
         /// <param name="gemType">寶石類型</param>
         public void SetGem(CellCoord coord, GemType gemType)
         {
-            _gems[coord.X,coord.Y] = new GemData(gemType);
+            _gems[coord.X, coord.Y] = new GemData(gemType);
         }
         /// <summary>
         /// 設定指定格子的寶石
@@ -59,7 +57,16 @@ namespace MatchGem.Core
         /// <param name="gemType">寶石類型</param>
         public void SetGem(int x, int y, GemType gemType)
         {
-            _gems[x,y] = new GemData(gemType);
+            _gems[x, y] = new GemData(gemType);
+        }
+        /// <summary>
+        /// 設定指定格子的寶石
+        /// </summary>
+        /// <param name="coord">定位資料</param>
+        /// <param name="data">現存的寶石資料</param>
+        public void SetGem(CellCoord coord, GemData data)
+        {
+            _gems[coord.X, coord.Y] = data;
         }
         /// <summary>
         /// 取得指定格子的寶石
@@ -68,8 +75,8 @@ namespace MatchGem.Core
         /// <returns>寶石資料</returns>
         public GemData GetGem(CellCoord coord)
         {
-            //三元運算,條件判斷(是/否)? 是(回應),否(回應)
-            return IsInside(coord) ? _gems[coord.X, coord.Y] : null;//有設定就要有拿
+            //三元運算，條件判斷(是/否) ? 是(回應) : 否(回應)
+            return IsInside(coord) ? _gems[coord.X, coord.Y] : null;
         }
         /// <summary>
         /// 取得指定格子的寶石
@@ -79,7 +86,7 @@ namespace MatchGem.Core
         /// <returns>寶石資料</returns>
         public GemData GetGem(int x, int y)
         {
-            return IsInside(x,y) ? _gems[x, y] : null;//有設定就要有拿
+            return IsInside(x, y) ? _gems[x, y] : null;
         }
 
         public GemType GetGemColor(CellCoord coord)
@@ -94,13 +101,41 @@ namespace MatchGem.Core
         /// <param name="to">目標</param>
         public void SwapGems(CellCoord from, CellCoord to)
         {
-            Debug.Log($"{_gems[from.X, from.Y].Color} → {_gems[to.X, to.Y].Color}");
-
-            GemData tmp = _gems[to.X,to.Y];
+            //Debug.Log($"{_gems[from.X, from.Y].Color}→{_gems[to.X, to.Y].Color}");
+            GemData tmp = _gems[to.X, to.Y];
             _gems[to.X, to.Y] = _gems[from.X, from.Y];
             _gems[from.X, from.Y] = tmp;
+            // Debug.Log($"{_gems[from.X, from.Y].Color}｜{_gems[to.X, to.Y].Color}");
+        }
 
-            Debug.Log($"{_gems[from.X, from.Y].Color} | {_gems[to.X, to.Y].Color}");
+        /// <summary>
+        /// 清除指定格子座標的資料(設為null)
+        /// </summary>
+        /// <param name="coord">格子座標</param>
+        public void ClearGem(CellCoord coord)
+        {
+            if (!IsInside(coord)) return;
+            _gems[coord.X, coord.Y] = null;
+        }
+        /// <summary>
+        /// 清除一整批格子清單的資料
+        /// </summary>
+        /// <param name="coords">格子清單</param>
+        public void ClearGems(List<CellCoord> coords)
+        {
+            for (int i = 0; i < coords.Count; i++)
+            {
+                ClearGem(coords[i]);
+            }
+        }
+
+        /// <summary>
+        /// 依照配對結果清除寶石
+        /// </summary>
+        /// <param name="result">配對結果</param>
+        public void ClearGems(MatchResult result)
+        {
+            ClearGems(result.GetUniqueCoords());
         }
         #endregion 公開方法
 
@@ -108,57 +143,52 @@ namespace MatchGem.Core
         /// <summary>
         /// 範圍檢查
         /// </summary>
-        /// <param name="coord"></param>
-        /// <returns></returns>
+        /// <param name="coord">座標資料組</param>
+        /// <returns>是/否</returns>
         public bool IsInside(CellCoord coord)
         {
-            return coord.X>= 0 && coord.Y>=0 && coord.X<Width && coord.Y<Height;
+            return coord.X >= 0 && coord.X < Width && coord.Y >= 0 && coord.Y < Height;
         }
         /// <summary>
         /// 範圍檢查
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="x">座標X</param>
+        /// <param name="y">座標Y</param>
+        /// <returns>是/否</returns>
         public bool IsInside(int x, int y)
         {
-            return x>= 0 && y>=0 && x<Width && y<Height;
+            return x >= 0 && x < Width && y >= 0 && y < Height;
         }
         /// <summary>
         /// 座標位置是否存在寶石
         /// </summary>
         /// <param name="coord">座標資料組</param>
-        /// <returns></returns>
+        /// <returns>是/否</returns>
         public bool HasGem(CellCoord coord)
         {
             return IsInside(coord) && _gems[coord.X, coord.Y] != null;
         }
-<<<<<<< Updated upstream
         /// <summary>
         /// 座標位置是否存在寶石
         /// </summary>
         /// <param name="x">座標X</param>
         /// <param name="y">座標Y</param>
-        /// <returns></returns>
+        /// <returns>是/否</returns>
         public bool HasGem(int x, int y)
         {
             return IsInside(x, y) && _gems[x, y] != null;
         }
         /// <summary>
-        /// 檢查兩格是否為相鄰位置
+        /// 檢查兩格是否為相鄰為置
         /// </summary>
         /// <param name="a">A格座標</param>
         /// <param name="b">B格座標</param>
         /// <returns></returns>
         public bool IsAdjacent(CellCoord a, CellCoord b)
         {
-            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) ==  1;
-=======
-        public bool HasGem(int x, int y)
-        {
-            return IsInside(x,y) && _gems[x,y] != null;
->>>>>>> Stashed changes
+            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) == 1;
         }
         #endregion 安全查驗功能
     }
+
 }

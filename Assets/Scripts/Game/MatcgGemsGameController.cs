@@ -1,6 +1,6 @@
-using MatchGem.Core;
-using MatchGem.View;
-using MatchGem.Inputs;
+using MatchGems.Core;
+using MatchGems.View;
+using MatchGems.Inputs;
 using UnityEngine;
 
 namespace MatchGems.Game
@@ -8,16 +8,27 @@ namespace MatchGems.Game
     /// <summary>
     /// 遊戲流程主程式(控制)
     /// </summary>
-    public class MatcgGemsGameController : MonoBehaviour
+    public class MatchGemsGameController : MonoBehaviour
     {
         #region 基本參數
         [SerializeField] private BoardView _boardView;
         [SerializeField] private BoardInput _boardInput;
-        [SerializeField] private int _wigth = 8;
+        [SerializeField] private int _width = 8;
         [SerializeField] private int _height = 8;
         private BoardModel _boardModel;
         private GridMapper _gridMapper;
-
+        /// <summary>
+        /// 預建立的配對檢查器
+        /// </summary>
+        private readonly MatchFinder _matchFinder = new MatchFinder();
+        /// <summary>
+        /// 預建立的落下解析器
+        /// </summary>
+        private readonly GravityResolver _gravityResolver = new GravityResolver();
+        /// <summary>
+        /// 預建立的寶石填充服務
+        /// </summary>
+        private readonly FillService _fillService = new FillService();
         #endregion 基本參數
 
         #region 生命週期
@@ -25,7 +36,7 @@ namespace MatchGems.Game
         {
             CreateBoard();
             CreateMapper();
-            _boardView.Build(_boardModel, _gridMapper);
+            BuildView();
             ConfigureInput();
         }
         #endregion 生命週期
@@ -36,40 +47,30 @@ namespace MatchGems.Game
         /// </summary>
         private void CreateBoard()
         {
-            _boardModel = new BoardModel(_wigth, _height);
+            _boardModel = new BoardModel(_width, _height);
 
-            for (int y = 0; y < _height; y++)
-            {
-                for (int x = 0; x < _wigth; x++)
-                {
-                    _boardModel.SetGem(x, y, (GemType)Random.Range(0, 6));
-
-                }
-            }
-
+            _fillService.Fill(_boardModel);
         }
         /// <summary>
         /// 建立轉換器
         /// </summary>
-        public void CreateMapper()
-        {//建構Root物件座標即為原點
-            _gridMapper = new GridMapper
-                (_boardView.transform.position, _boardView.CellWorldSize);
+        private void CreateMapper()
+        {
+            //建構Root物件座標即為原點
+            _gridMapper = new GridMapper(_boardView.transform.position, _boardView.CellWorldSize);
         }
-
         /// <summary>
         /// 以資料驅動視覺
         /// </summary>
-        public void BuildView()
+        private void BuildView()
         {
             _boardView.Build(_boardModel, _gridMapper);
         }
         /// <summary>
         /// 設置輸入操作
         /// </summary>
-        public void ConfigureInput()
+        private void ConfigureInput()
         {
-            
             _boardInput.Configure(_gridMapper);//CellSize先走預設
             _boardInput.SwapAction = TrySwap;
         }
@@ -84,38 +85,25 @@ namespace MatchGems.Game
             if (!_boardModel.IsInside(to)) return;
             if (!_boardModel.IsAdjacent(from, to)) return;
             _boardModel.SwapGems(from, to);
+            //執行配對演算邏輯
+            MatchLogic();
+            //刷新視覺
             BuildView();
-            //執行配對的演算邏輯
-            MatchLog();
         }
 
-        private void MatchLog()
+        private void MatchLogic()
         {
-            // 💡 1. 您必須在這裡 new 出剛剛修好的 Finder 物件
-            MatchFinder finder = new MatchFinder();
-
-            // 💡 2. 將現有的 _boardModel 丟進去進行全盤掃描
-            MatchResult result = finder.FindMatches(_boardModel);
-
-            // 💡 3. 如果沒有連線，程式會在這裡直接被攔截 return
-            if (!result.HasMatch)
-            {
-                // 您也可以在這裡加一行測試，看有沒有成功走到這：
-                // Debug.Log("【測試】掃描完畢，但盤面上目前沒有任何連線。");
-                return;
-            }
-
-            // 💡 4. 只有當 Finder 真的在 _boardModel 裡抓到連線，這行才會印出來！
-            Debug.Log($"配到{result.LineCount}條");
-        }
-        /*{
             //掃描結果
-            MatchResult result = new MatchResult();
+            MatchResult result = _matchFinder.FindMatches(_boardModel);
 
             if (!result.HasMatch) return;
-
-            Debug.Log($"配到{result.LineCount}條");
-        }*/
+            //消除
+            _boardModel.ClearGems(result);
+            //落珠
+            _gravityResolver.Resolve(_boardModel);
+            //補珠
+            _fillService.Fill(_boardModel);
+        }
         #endregion 私有方法
     }
 }

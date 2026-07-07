@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MatchGem.Core
+namespace MatchGems.Core
 {
     /// <summary>
-    /// 消除的配對方向
+    /// 消除配方向
     /// </summary>
     public enum MatchDirection
     {
@@ -22,14 +22,18 @@ namespace MatchGem.Core
     /// </summary>
     public class MatchLine
     {
-        #region 唯獨紀錄
+        #region 唯讀紀錄
         /// <summary>
         /// 連線的棋盤座標清單
         /// </summary>
-        private List<CellCoord> _coords;
-        #endregion 唯獨紀錄
+        private readonly List<CellCoord> _coords;
+        #endregion 唯讀紀錄
 
         #region 公開資訊
+        /// <summary>
+        /// 連線座標組合(單條)公開接口
+        /// </summary>
+        public List<CellCoord> Coords => _coords;
         /// <summary>
         /// 連線方向
         /// </summary>
@@ -39,7 +43,7 @@ namespace MatchGem.Core
         /// </summary>
         public GemType Color { get; }
         /// <summary>
-        /// 連線長度(資料記錄數量)
+        /// 連線長度(資料紀錄數量)
         /// </summary>
         public int Length => _coords.Count;
         #endregion 公開資訊
@@ -53,5 +57,4 @@ namespace MatchGem.Core
         }
         #endregion 建構式
     }
-
 }

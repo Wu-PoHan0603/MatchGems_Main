@@ -1,10 +1,7 @@
-﻿///<summary>
-///寶石型態
-///</summary>
-namespace MatchGem.Core
+﻿namespace MatchGems.Core
 {
     /// <summary>
-    /// [enum]C# 的列舉預設以整數（int）為基礎，可明確指定數值或自訂基礎型別（如 byte）
+    /// [Enum]寶石種類
     /// </summary>
     public enum GemType
     {
@@ -31,7 +28,6 @@ namespace MatchGem.Core
         /// <summary>
         /// 粉色(心)
         /// </summary>
-        Pink,
+        Pink
     }
-
 }

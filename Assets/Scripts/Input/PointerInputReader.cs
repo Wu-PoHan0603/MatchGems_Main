@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MatchGem.Inputs
+namespace MatchGems.Inputs
 {
     /// <summary>
     /// 指標輸入(螢幕座標)讀取器
@@ -29,7 +29,7 @@ namespace MatchGem.Inputs
                 }
             }
             if (Input.GetMouseButtonDown(0))
-            {//檢測滑鼠的左鍵是否按下
+            {//檢測滑鼠左鍵是否按下
                 screenPos = Input.mousePosition;
                 return true;
             }
@@ -39,21 +39,21 @@ namespace MatchGem.Inputs
         /// <summary>
         /// 嘗試取得指標放開的位置
         /// </summary>
-        /// <param name="screenPos">out點擊滑鼠左鍵當下的位置</param>
+        /// <param name="screenPos">out滑鼠左鍵當下的位置</param>
         /// <returns>是否放開左鍵</returns>
         public bool TryGetPointerUp(out Vector2 screenPos)
         {
             if (Input.touchCount > 0)
             {//觸控點大於1時
                 touch = Input.GetTouch(0);
-                if (touch.phase == TouchPhase.Ended ||touch.phase == TouchPhase.Canceled)
+                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
                 {
                     screenPos = touch.position;
                     return true;
                 }
             }
             if (Input.GetMouseButtonUp(0))
-            {//檢測滑鼠的左鍵是否放開
+            {//檢測滑鼠左鍵是否放開
                 screenPos = Input.mousePosition;
                 return true;
             }
@@ -62,5 +62,4 @@ namespace MatchGem.Inputs
         }
         #endregion 公開方法
     }
-
 }
