@@ -16,18 +16,10 @@ namespace MatchGems.View
         [SerializeField] private int _cellSize = 64;
         [SerializeField] private float _pixelPerUnit = 64f;
         [SerializeField] private GemTile _tilePrefab;
-        private GemTile[,] _tiles;
         private GridMapper _gridMapper;
-        /// <summary>
-        /// 回收池(物件池設計模式)
-        /// 隊列：先進先出
-        /// </summary>
-        private readonly Queue<GemTile> _standby = new Queue<GemTile>();
-        /// <summary>
-        /// 上一輪對照字典<資料，視覺>
-        /// </summary>
-        private Dictionary<GemData, GemTile> _prevByGem = new Dictionary<GemData, GemTile>();
-        private Dictionary<GemData, GemTile> _nextByGem = new Dictionary<GemData, GemTile>();
+
+        private GemTile[,] _tiles;
+        private GemTilePool _tilePool;
         #endregion 基本參數
 
         #region 公開屬性
@@ -45,6 +37,13 @@ namespace MatchGems.View
         public float CellWorldSize => _cellSize / _pixelPerUnit;
         #endregion 公開屬性
 
+        #region 生命週期
+        private void Start()
+        {
+            _tilePool = new GemTilePool(_tilePrefab, transform);
+        }
+        #endregion 生命週期
+
         #region 公開方法
         /// <summary>
         /// 依棋盤資料建立全部Tile視覺
@@ -53,8 +52,7 @@ namespace MatchGems.View
         public void Build(BoardModel board, GridMapper gridMapper)
         {
             _gridMapper = gridMapper;
-            _prevByGem.Clear();//初建安全清除
-            //ClearTiles();
+            ReleaseGemTiles();//初建安全清除
             //產生與資料相同的視覺尺寸
             _tiles = new GemTile[board.Width, board.Height];
 
@@ -68,18 +66,16 @@ namespace MatchGems.View
                     _tiles[x, y] = CreateTile(x, y);
                     //設定對應視覺(顏色)
                     _tiles[x, y].SetGem(gemData);
-                    //當前面盤資料和視覺的紀錄
-                    _prevByGem[gemData] = _tiles[x, y];
                 }
             }
         }
 
-        public async Task AnimateBuildAsync(BoardModel board, GridMapper gridMapper, float duration)
+        /*public async Task AnimateBuildAsync(BoardModel board, GridMapper gridMapper, float duration)
         {
             _gridMapper = gridMapper;
             //建立移動的清單
             List<Task> moves = new List<Task>();
-            
+
             //全盤任務建立
             for (int y = 0; y < board.Height; y++)
             {
@@ -110,8 +106,17 @@ namespace MatchGems.View
 
             _prevByGem = _nextByGem;//下一輪的面盤紀錄成現在的樣子
             await Task.WhenAll(moves);//等待全部移動結束
+        }*/
+
+        public async Task AnimateFallAsync(BoardModel boardModel, List<TileMove> falls, float duration)
+        {
+            
         }
 
+        public async Task AnimateBuildAsync(BoardModel board, GridMapper gridmapper, float duration)
+        {
+
+        }
         public void GemTileAsync(CellCoord from, CellCoord to)
         {
             GemTile tmp = _tiles[to.X, to.Y];
@@ -150,9 +155,8 @@ namespace MatchGems.View
             {
                 GemTile tile = GetTile(list[i]);
                 if (tile == null) continue;//防呆：避免回收空物件
-                _tiles[list[i].X, list[i].Y] = null;//消除紀錄
+                ReleaseGemTile(list[i]);//物件池回收
                 pops.Add(tile.PopAsync(duration));//加入任務待辦
-                RecycleToStandby(tile);//執行回收
             }
             //等待整組任務都完成
             await Task.WhenAll(pops);
@@ -161,26 +165,27 @@ namespace MatchGems.View
 
         #region 私有方法
         /// <summary>
-        /// 將消除的寶石磚收進回收池
+        /// 回物件池的GemTile 消除紀錄
         /// </summary>
-        /// <param name="tile"></param>
-        private void RecycleToStandby(GemTile tile)
+        /// <param name="coord"></param>
+        private void ReleaseGemTile(CellCoord coord)
         {
-            _standby.Enqueue(tile);//加入回收池，排隊待命被取用
-            //tile.gameObject.SetActive(false);
+            _tilePool.Release(_tiles[coord.X, coord.Y]);//收回物件池
+            _tiles[coord.X, coord.Y] = null;//消除紀錄
         }
-        /// <summary>
-        /// 從回收池取得寶石磚
-        /// </summary>
-        /// <param name="spawnPos">到指定位置</param>
-        /// <returns>寶石磚</returns>
-        private GemTile GetFromStandby(Vector3 spawnPos)
+        private void ReleaseGemTiles()
         {
-            GemTile tile = _standby.Count > 0 ? _standby.Dequeue() : CreateTileAt(spawnPos);//當有物件在隊列時正常抽取，否則建立新的到指定位置
-            tile.transform.position = spawnPos;//重設位置
-            tile.transform.localScale = Vector3.one;//重設縮放
-            return tile;
+            if (_tilePool == null || _tiles == null) return;
+
+            for (int x = 0; x < _tiles.GetLength(0); x++)
+            {
+                for (int y = 0; y < _tiles.GetLength(1); y++)
+                {
+                    _tilePool.Release(_tiles[x, y]);
+                }
+            }
         }
+
         /// <summary>
         /// 依照定位實例化寶石磚
         /// </summary>
@@ -192,11 +197,7 @@ namespace MatchGems.View
             //Vector3 position = new Vector3(x * CellWorldSize, y * CellWorldSize, 0);
             return CreateTileAt(_gridMapper.ToWorld(new CellCoord(x, y)));
         }
-        private GemTile CreateTile(CellCoord coord)
-        {
-            //Vector3 position = new Vector3(x * CellWorldSize, y * CellWorldSize, 0);
-            return CreateTileAt(_gridMapper.ToWorld(coord));
-        }
+
         /// <summary>
         /// 建立寶石磚在世界座標
         /// </summary>
