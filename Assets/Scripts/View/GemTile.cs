@@ -1,6 +1,6 @@
 using UnityEngine;
-using MatchGems.Core;//導入核心資料
-using System.Threading.Tasks;
+using MatchGems.Core;
+using System.Threading.Tasks;//導入核心資料
 
 namespace MatchGems.View
 {
@@ -55,15 +55,16 @@ namespace MatchGems.View
             SpriteRenderer.color = GetColor(gemData.Color);
             transform.localScale = Vector3.one * _tileScale;
         }
+
         /// <summary>
-        /// 將Tile移動到指定位置(指定時限)
+        /// 將 Tile 移動到指定位置(指定時限)
         /// </summary>
         /// <param name="targetPos">目標位置(終點)</param>
         /// <param name="duration">動畫時長</param>
         /// <returns></returns>
         public async Task MoveToAsync(Vector3 targetPos, float duration)
         {
-            if(duration <= 0)
+            if (duration <= 0)
             {//移動時間為0，瞬間完成任務
                 transform.position = targetPos;
                 return;//任務結束
@@ -75,19 +76,19 @@ namespace MatchGems.View
             while (timer < duration)
             {//時間動畫進行中
                 if (this == null) return;
-                timer += Time.deltaTime;//累進 1s/FPS
+                timer += Time.deltaTime;//累進 1S/FPS
                 float t = Mathf.Clamp01(timer / duration);//計算運作進度%
                 //座標線性插值靠攏
-                transform.position = Vector3.Lerp(startPos, targetPos, t) ;
+                transform.position = Vector3.Lerp(startPos, targetPos, t);
                 await Task.Yield();//等一幀：減慢迴圈使其與FPS同步
             }
             //釘板：清理誤差值
             transform.position = targetPos;
         }
         /// <summary>
-        /// 將Tile縮小到等同消失(指定時限)
+        /// 將 Tile 縮小到等同消失(指定時限)
         /// </summary>
-        /// <param name="duration"></param>
+        /// <param name="duration">動畫時長</param>
         /// <returns></returns>
         public async Task PopAsync(float duration)
         {
@@ -112,7 +113,6 @@ namespace MatchGems.View
             //釘板：清理誤差值
             transform.localScale = Vector3.zero;
         }
-
         #endregion 公開功能
 
         #region 私有功能

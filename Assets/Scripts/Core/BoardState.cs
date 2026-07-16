@@ -26,7 +26,6 @@ namespace MatchGems.Core
         /// <summary>
         /// ¸É¯]ºt¥X
         /// </summary>
-        Filling,
+        Filling
     }
-
 }
