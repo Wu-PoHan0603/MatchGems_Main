@@ -46,7 +46,7 @@ namespace MatchGems.Core
         {
             for (int x = 0; x < board.Width; x++)
             {
-                for (int y = 0; x < board.Height; x++)
+                for (int y = 0; y < board.Height; y++)
                 {
                     if (board.HasGem(coord)) continue;
                     //ªÅ¦ì¸É¯]
