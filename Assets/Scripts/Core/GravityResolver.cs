@@ -9,17 +9,17 @@ namespace MatchGems.Core
     public class GravityResolver
     {
         /// <summary>
-        /// 重力移動暫存清單
+        /// 重力移動的暫存清單
         /// </summary>
         private readonly List<TileMove> moves = new List<TileMove>();
         /// <summary>
-        /// 定位用座標暫存
+        /// 定位用的座標暫存
         /// </summary>
-        private readonly CellCoord coordFrom = new CellCoord();
-        private readonly CellCoord coordTo = new CellCoord();
+        private CellCoord coordFrom;
+        private CellCoord coordTo;
         #region 公開方法
         /// <summary>
-        /// 原始墜落方式
+        /// PlaneA：原始墜落方式
         /// </summary>
         /// <param name="board"></param>
         /*public void Resolve(BoardModel board)
@@ -30,10 +30,10 @@ namespace MatchGems.Core
             }
         }*/
         /// <summary>
-        /// PlanB：回傳每顆寶石 From → TO 紀錄
+        /// PlaneB：回傳每顆寶石 From→To 紀錄
         /// </summary>
         /// <param name="board"></param>
-        /// <returns>移動記錄清單</returns>
+        /// <returns>移動紀錄清單</returns>
         public List<TileMove> Resolve(BoardModel board)
         {
             moves.Clear();
@@ -41,13 +41,13 @@ namespace MatchGems.Core
             for (int x = 0; x < board.Width; x++)
             {
                 int writeY = 0;//Y定位
-                for (int ready = 0; ready < board.Width; ready++)
+                for (int readY = 0; readY < board.Height; readY++)
                 {
-                    coordFrom.Set(x, ready);
+                    coordFrom.Set(x, readY);
                     if (!board.HasGem(coordFrom)) continue;
 
                     coordTo.Set(x, writeY);
-                    if(ready > writeY)
+                    if (readY > writeY)
                     {
                         board.SetGem(coordTo, board.GetGem(coordFrom));
                         board.ClearGem(coordFrom);
