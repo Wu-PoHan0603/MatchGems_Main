@@ -105,18 +105,27 @@ namespace MatchGems.Game
                 _boardFlowController.SetIdle();//回到待機
                 return;//任務中斷
             }
+            int comboCount = 0;
             //有配對：進入循環(進到忙碌計算)
             while (result.HasMatch)
             {
-                //清除資料(線) + 消除動態表演
+                //清除資料(整體)
                 _boardFlowController.ClearStep(_boardModel, result);
-                await _boardView.AnimateClearAsync(result.GetUniqueCoords(), _clearAnimationDuration);
+                //消除動態表演(逐線處理)
+                foreach (MatchLine line in result.Line)
+                {
+                    comboCount++;//正確計算連鎖的位子
+                    Debug.Log($"連鎖：{comboCount} !!");
+                    await _boardView.AnimateClearAsync(line.Coords, _clearAnimationDuration);
+                }
+
                 //套用重力：落下資料
                 List<TileMove> falls = _boardFlowController.ApplyGravity(_boardModel);
                 await _boardView.AnimateFallAsync(_boardModel, falls, _buildAnimationDuration);
+
                 //套用天降：填充資料
                 List<TileMove> fills = _boardFlowController.ApplyFill(_boardModel);
-                await _boardView.AnimateFallAsync(_boardModel, falls, _buildAnimationDuration);
+                await _boardView.AnimateFillAsync(_boardModel, fills, _buildAnimationDuration);
 
                 //再次檢查有無配對
                 result = _boardFlowController.FindMatches(_boardModel);

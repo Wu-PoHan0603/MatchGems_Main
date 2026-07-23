@@ -33,7 +33,7 @@ namespace MatchGems.Core
         /// <summary>
         /// 連線座標組合(單條)公開接口
         /// </summary>
-        public List<CellCoord> Coords => _coords;
+        public IReadOnlyList<CellCoord> Coords => _coords;
         /// <summary>
         /// 連線方向
         /// </summary>

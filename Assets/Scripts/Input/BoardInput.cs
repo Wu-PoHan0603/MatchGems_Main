@@ -70,7 +70,7 @@ namespace MatchGems.Inputs
             _isDragging = true;
             _dragStartPos = downPos;
             _dragStartCoord = ScreenToCell(_dragStartPos);
-            Debug.Log(_dragStartCoord.pos);
+            //Debug.Log(_dragStartCoord.pos);
         }
         /// <summary>
         /// 螢幕座標位置轉世界座標
@@ -144,4 +144,4 @@ namespace MatchGems.Inputs
         }
         #endregion 私有方法
     }
-}
+}   
